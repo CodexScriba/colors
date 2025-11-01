@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers";
+import { BackgroundSurface } from "@/components/surfaces/background-surface";
 import { Navbar } from "@/components/navbar";
 
 export const metadata: Metadata = {
@@ -15,15 +16,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
+      <body className="bg-transparent">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar />
-          <main className="pt-28">{children}</main>
+          <BackgroundSurface>
+            <Navbar />
+            <main className="pt-28">{children}</main>
+          </BackgroundSurface>
         </ThemeProvider>
       </body>
     </html>

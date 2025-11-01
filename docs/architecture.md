@@ -12,6 +12,10 @@
 
 ## Tech Stack
 
+> **Scope of this document**
+>
+> The architecture guide captures work that is already implemented in the repository. Future roadmap items or planned enhancements live exclusively in `docs/plan.md`.
+
 ### Core Framework
 - **Next.js** `16.0.1` - React framework with App Router
 - **React** `19.2.0` - UI library
@@ -41,7 +45,8 @@
 
 ### Theme Management
 - **next-themes** `0.4.6` - Dark mode and theme switching
-- CSS Variables - Dynamic theming system
+- Layered token registry (`lib/theme-tokens.ts`) - Zod-validated gradients, lighting, shadows
+- CSS Variables - Dynamic theming system fed from the registry
 
 ### Additional Libraries
 - **class-variance-authority** `0.7.1` - Component variant management
@@ -71,7 +76,9 @@ colors/
 │   │   ├── nav-links.tsx       # Navigation links (Home, Videos, Images)
 │   │   ├── search-bar.tsx      # Search input
 │   │   └── theme-toggle.tsx    # Dark/Light mode toggle
-│   ├── providers.tsx            # Theme provider wrapper
+│   ├── providers.tsx            # Theme provider wrapper + layered contexts
+│   ├── surfaces/                # Layered surface primitives
+│   │   └── background-surface.tsx # Ambient/directional background renderer
 │   └── ui/                      # shadcn/ui components (51+ files)
 │       ├── accordion.tsx
 │       ├── alert.tsx
@@ -85,6 +92,7 @@ colors/
 │       └── ... (46+ more components)
 │
 ├── lib/                         # Utility functions
+│   ├── theme-tokens.ts        # Typed registry for surface tokens
 │   ├── supabase.ts             # Supabase client configuration
 │   └── utils.ts                # cn() utility for className merging
 │
@@ -172,25 +180,33 @@ The navbar is designed with a modern, responsive approach:
    - Drawer slides from right
    - Contains all navigation + auth + settings
 
+### Layered Surface System
+
+- **Theme Provider (`components/providers.tsx`)**
+  - Wraps `next-themes` with two extra contexts: a read-only `ThemeTokensContext` backed by the Zod-validated registry, and a `LightingContext` that tracks ambient/directional toggles for future inspector controls.
+  - Exposes `useThemeTokens()` / `useLighting()` hooks so any surface can read the parsed gradients, shadow tiers, or manipulate lighting passes.
+- **BackgroundSurface (`components/surfaces/background-surface.tsx`)**
+  - Renders the background gradient from the registry while falling back to the solid background color during load.
+  - Projects ambient and directional light washes using CSS radial/linear gradients, blurs, and offsets derived from lighting tokens; blend modes ensure the effect is additive.
+  - Hosts the application shell content in a stacking context that keeps gradients behind interactive UI.
+- **Layout integration (`app/layout.tsx`)**
+  - Wraps the entire App Router tree with `BackgroundSurface`, ensuring all pages share the same layered backdrop foundation while still inheriting the lighting toggles from the provider.
+
 ## Styling System
 
 ### CSS Variables
 
-The project uses a comprehensive CSS variable system for theming:
+The project uses a layered CSS variable system that mirrors the token registry:
 
-**Color Tokens:**
-- `--background` / `--foreground` - Base colors
-- `--primary` / `--primary-foreground` - Primary actions
-- `--secondary` / `--secondary-foreground` - Secondary elements
-- `--muted` / `--muted-foreground` - Muted content
-- `--accent` / `--accent-foreground` - Accent highlights
-- `--destructive` / `--destructive-foreground` - Error states
-- `--border` / `--input` / `--ring` - Form elements
-- `--chart-{1-5}` - Chart colors
+- **Background layer** – `--background`, `--background-fallback`, `--background-gradient`, `--glow-ambient`, `--glow-directional`, `--foreground`
+- **Container layer** – `--container`, `--container-foreground`, `--container-gradient`, `--container-border`, `--container-border-strong`, `--container-shadow-ambient`, `--container-shadow-lifted`, `--container-shadow-inset`
+- **Card layer** – `--card`, `--card-foreground`, `--card-gradient`, `--card-border`, `--card-shadow-soft`, `--card-shadow-hard`, `--card-shadow-floating`
+- **Semantic + interaction** – `--primary`, `--primary-foreground`, `--secondary`, `--secondary-foreground`, `--muted`, `--muted-foreground`, `--accent`, `--accent-foreground`, `--destructive`, `--destructive-foreground`, `--border`, `--border-strong`, `--input`, `--ring`
+- **Data visualization** – `--chart-1` … `--chart-5`
 
 **Dark Mode:**
 - Automatic class switching with `next-themes`
-- Separate color values for `.dark` selector
+- Separate color, gradient, and lighting values for the `.dark` selector
 - System preference detection
 
 **Utility Function:**

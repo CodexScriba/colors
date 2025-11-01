@@ -1,10 +1,14 @@
 # Colors – Layered Delivery Plan
 
+> **Scope of this document**
+>
+> The delivery plan tracks future or in-progress work. Anything already implemented is documented in `docs/architecture.md`.
+
 ## Background Context
 - Built on Next.js App Router with React 19 and TypeScript 5 for strongly typed UI flows.
 - Tailwind CSS and shadcn/ui supply the composable surface primitives; ThemeProvider in `components/providers.tsx` orchestrates light/dark switching.
 - Bun scripts (`bun run dev|build|start`) drive local workflows across environments.
-- Global tokens in `app/globals.css` will expand to cover gradients, borders, shadows, and lighting accents; `lib/theme-tokens.ts` exposes a typed registry for all visual layers.
+- Global tokens in `app/globals.css` now cover gradients, borders, shadows, and lighting accents; `lib/theme-tokens.ts` exposes a typed registry for all visual layers.
 
 ## Hierarchy Blueprint
 - **Background Layer** – Page-level paint, typography, noise/texture, global gradients, and lighting washes derived from `--background`, `--background-gradient`, and glow tokens.
@@ -32,18 +36,7 @@ Deliverables:
 Acceptance:
 - Stakeholders agree on hierarchy goals, effect tokens to expose, and success metrics for copy/reset tooling.
 
-### Layer 1 – Background System
-- Audit and normalize CSS variables in `app/globals.css`; expand definitions to include `--background-gradient`, `--glow-ambient`, and `--glow-directional` for lighting effects.
-- Stand up typed token registry in `lib/theme-tokens.ts` with schema guards for gradient stops, blur radii, and light intensity.
-- Wire global backgrounds/typography in `app/layout.tsx` and `ThemeProvider`, enabling background gradient previews and toggleable lighting passes.
-- Provide live preview of background gradients (linear, radial) with fallback colors for browsers lacking gradient support.
-
-Deliverables:
-- Token registry, background theming verified, layout base styles updated with gradient/light tokens and documentation.
-
-Acceptance:
-- Background layer renders correctly across themes with no missing tokens, gradient fallbacks, or lighting artifacts; copying background styles yields complete CSS snippets.
-
+### Layer 2 – Container System
 - Build Variables Inspector frame with grouped sections (Base, Surfaces, Actions, Feedback, Chrome, Data Viz) and an action toolbar for Copy/Reset buttons.
 - Compose Preview Canvas shell: page background → container surface → card grid scaffolding, supporting gradient overlays, adjustable border radii/widths, and container shadow presets (ambient, lifted, inset).
 - Implement lighting toggles per container (spotlight highlight for focused panels, soft glow for inactive states).
@@ -55,6 +48,7 @@ Deliverables:
 Acceptance:
 - Containers resize gracefully, respond to gradient/border/shadow edits in real time, lighting transitions remain smooth, and toolbar buttons update state without layout shifts.
 
+### Layer 3 – Card System
 - Implement card variants (primary, subdued, data viz) using `components/ui/card.tsx` with per-card gradient presets (linear, radial, conic) and blend modes.
 - Expose border controls (width, style, color accent) and shadow depth tiers (`--shadow-card-soft`, `--shadow-card-hard`, `--shadow-card-floating`) with lighting highlights for hover/active states.
 - Populate cards with representative UI (buttons, inputs, badges, tables, charts, media swatches) demonstrating gradient overlays, shadows, and lighting interplay.
@@ -83,6 +77,7 @@ Deliverables:
 Acceptance:
 - Accurate AA/AAA reporting with actionable guidance, no layout shifts, and warnings triggered for gradient or lighting conflicts.
 
+### Layer 5 – State & Copy Workflows
 - Model theme state with undo/redo stack covering color, gradient, border, shadow, lighting tokens, and toolbar button interactions.
 - Implement preset save/load (localStorage first) plus import/export (JSON + CSS snippet) capturing gradient definitions, shadow matrices, and lighting modes.
 - Add reset-to-default pathways: global Reset All, layer-specific resets (Background/Container/Card), and contextual Reset on each token group.
@@ -106,6 +101,7 @@ Deliverables:
 Acceptance:
 - Cloud pathways are documented without blocking local workflows; UX messaging clearly communicates copy/reset outcomes and effect validation.
 
+### Layer 7 – QA & Testing
 - Unit: token parsing, gradient stop serialization, contrast math, undo/redo logic.
 - Component: inspector inputs, toolbar buttons, container responsiveness, card effect rendering.
 - E2E: edit gradients/borders/shadows → copy palette → reset layers → reload → export → re-import → navigate to Buttons/Backgrounds/Cards pages and validate per-view folder persistence.
@@ -129,6 +125,7 @@ Deliverables:
 Acceptance:
 - Interactions feel instant; lighting and gradient transitions remain smooth on typical hardware; copy/reset buttons respond within 100ms.
 
+### Layer 9 – Release Enablement
 - Update `docs/architecture.md` with layered hierarchy decisions, effect token taxonomy, toolbar behaviors, and navigation structure (Home, Buttons, Backgrounds, Cards, Effects, Tokens).
 - Produce usage guide covering background/container/card setup, gradient/shadow recipes, copy/reset workflows, folder organization, and navigation tips.
 - Record decisions in `docs/decisions.md` as needed; prep changelog, demo assets (GIFs showing gradients, lighting, and per-view edits), and release checklist.
@@ -142,11 +139,11 @@ Acceptance:
 ---
 
 ## Token Groups (Current Focus)
-- Background: `--background`, `--background-gradient`, `--foreground`, `--glow-ambient`, `--glow-directional`
-- Containers: `--container`, `--container-gradient`, `--muted`, `--muted-foreground`, `--border`, `--border-strong`, `--input`, `--ring`, `--shadow-container`, `--shadow-container-inset`
-- Cards & Content: `--card`, `--card-gradient`, `--card-foreground`, `--primary`, `--primary-foreground`, `--secondary`, `--secondary-foreground`, `--accent`, `--accent-foreground`, `--shadow-card-soft`, `--shadow-card-hard`, `--shadow-card-floating`
-- Feedback: `--destructive`, `--destructive-foreground`, `--border-critical`, `--shadow-critical`
-- Data Viz: `--chart-1` … `--chart-5`, `--chart-gradient-1` … `--chart-gradient-3`
+- Background: `--background`, `--background-fallback`, `--background-gradient`, `--foreground`, `--glow-ambient`, `--glow-directional`
+- Containers: `--container`, `--container-foreground`, `--container-gradient`, `--container-border`, `--container-border-strong`, `--container-shadow-ambient`, `--container-shadow-lifted`, `--container-shadow-inset`
+- Cards & Content: `--card`, `--card-foreground`, `--card-gradient`, `--card-border`, `--card-shadow-soft`, `--card-shadow-hard`, `--card-shadow-floating`, `--primary`, `--primary-foreground`, `--secondary`, `--secondary-foreground`, `--accent`, `--accent-foreground`
+- Feedback: `--destructive`, `--destructive-foreground`, `--border`, `--border-strong`, `--input`, `--ring`
+- Data Viz: `--chart-1` … `--chart-5`
 
 ## Gradient, Border, and Shadow Presets
 - Background presets: Dawn Fade (linear), Midnight Radial, Nebula Noise overlay.

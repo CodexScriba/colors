@@ -77,6 +77,10 @@ colors/
 │   │   ├── search-bar.tsx      # Search input
 │   │   └── theme-toggle.tsx    # Dark/Light mode toggle
 │   ├── providers.tsx            # Theme provider wrapper + layered contexts
+│   ├── inspector/               # Variables inspector for surface controls
+│   │   └── variables-inspector.tsx
+│   ├── preview/                 # Preview canvas compositions
+│   │   └── preview-canvas.tsx
 │   ├── surfaces/                # Layered surface primitives
 │   │   └── background-surface.tsx # Ambient/directional background renderer
 │   └── ui/                      # shadcn/ui components (51+ files)
@@ -92,6 +96,8 @@ colors/
 │       └── ... (46+ more components)
 │
 ├── lib/                         # Utility functions
+│   ├── container-settings.ts  # Defaults & sanitizers for container controls
+│   ├── container-style.ts     # Derived gradients, overlays, and CSS snippets
 │   ├── theme-tokens.ts        # Typed registry for surface tokens
 │   ├── supabase.ts             # Supabase client configuration
 │   └── utils.ts                # cn() utility for className merging
@@ -183,14 +189,24 @@ The navbar is designed with a modern, responsive approach:
 ### Layered Surface System
 
 - **Theme Provider (`components/providers.tsx`)**
-  - Wraps `next-themes` with two extra contexts: a read-only `ThemeTokensContext` backed by the Zod-validated registry, and a `LightingContext` that tracks ambient/directional toggles for future inspector controls.
-  - Exposes `useThemeTokens()` / `useLighting()` hooks so any surface can read the parsed gradients, shadow tiers, or manipulate lighting passes.
+  - Now wraps `next-themes` with `ThemeTokensContext`, `LightingContext`, and the new `ContainerSettingsContext` so gradients, lighting, and container controls stay coordinated.
+  - Exposes `useThemeTokens()`, `useLighting()`, and `useContainerSettings()` hooks for downstream components.
+- **Container settings foundation (`components/providers.tsx`, `lib/container-settings.ts`)**
+  - Persists radius, border width, gradient angle, overlay intensity, shadow preset, and grid guides in `localStorage` through `sanitizeContainerSettings()`.
+  - Supplies reset helpers and update methods consumed by the inspector and preview canvas.
 - **BackgroundSurface (`components/surfaces/background-surface.tsx`)**
   - Renders the background gradient from the registry while falling back to the solid background color during load.
   - Projects ambient and directional light washes using CSS radial/linear gradients, blurs, and offsets derived from lighting tokens; blend modes ensure the effect is additive.
   - Hosts the application shell content in a stacking context that keeps gradients behind interactive UI.
 - **Layout integration (`app/layout.tsx`)**
   - Wraps the entire App Router tree with `BackgroundSurface`, ensuring all pages share the same layered backdrop foundation while still inheriting the lighting toggles from the provider.
+  - Mounts the Sonner `Toaster` so inspector and preview actions provide immediate feedback.
+- **Variables Inspector (`components/inspector/variables-inspector.tsx`)**
+  - Toolbar buttons copy palette snippets, container CSS, or reset the layer; shadcn inputs drive the container settings context while Sonner toasts confirm actions.
+  - Sections (Base, Surfaces, Actions, Feedback) cover radius, border width, gradient angle, overlay intensity, lighting toggles, and grid guides.
+- **Preview Canvas (`components/preview/preview-canvas.tsx`)**
+  - Uses `computeContainerSurfaceStyle()` to derive gradients, overlays, and shadows, mirroring inspector adjustments in real time.
+  - Demonstrates the container layer across hero content, stat tiles, and snapshot cards with optional grid guides and lighting chips.
 
 ## Styling System
 

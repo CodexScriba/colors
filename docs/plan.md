@@ -36,34 +36,18 @@ Deliverables:
 Acceptance:
 - Stakeholders agree on hierarchy goals, effect tokens to expose, and success metrics for copy/reset tooling.
 
-### Layer 2 – Container System
-- Build Variables Inspector frame with grouped sections (Base, Surfaces, Actions, Feedback, Chrome, Data Viz) and an action toolbar for Copy/Reset buttons.
-- Compose Preview Canvas shell: page background → container surface → card grid scaffolding, supporting gradient overlays, adjustable border radii/widths, and container shadow presets (ambient, lifted, inset).
-- Implement lighting toggles per container (spotlight highlight for focused panels, soft glow for inactive states).
-- Ensure responsive split layout, keyboard navigation between panes, and persisted container effect settings.
-
-Deliverables:
-- `VariablesInspector` container and `PreviewCanvas` shell with gradient/border/shadow configuration panels, toolbar buttons wired, and lighting controls.
-
-Acceptance:
-- Containers resize gracefully, respond to gradient/border/shadow edits in real time, lighting transitions remain smooth, and toolbar buttons update state without layout shifts.
-
 ### Layer 3 – Card System
-- Implement card variants (primary, subdued, data viz) using `components/ui/card.tsx` with per-card gradient presets (linear, radial, conic) and blend modes.
-- Expose border controls (width, style, color accent) and shadow depth tiers (`--shadow-card-soft`, `--shadow-card-hard`, `--shadow-card-floating`) with lighting highlights for hover/active states.
-- Populate cards with representative UI (buttons, inputs, badges, tables, charts, media swatches) demonstrating gradient overlays, shadows, and lighting interplay.
-- Assemble a content strip inside the Preview Canvas featuring: hero header, KPI cards, form block, data table, and media gallery so users observe real-time token propagation across varied content densities.
-- Instrument the content strip with inspector bindings and hovering aids (token tags, contrast callouts) to clarify which background/container/card tokens drive each region.
-- Add card-level Copy Style button for quickly exporting gradient stops, border configs, shadow matrix, and lighting metadata.
-- Create dedicated Button Workshop view (accessible via navbar) with folders for global button variables (radii, padding), state tokens (default, hover, focus, disabled), and icon/button hybrids. Mirror this folder structure in the inspector to keep controls organized by use-case.
-- Create Background Studio view with folders for gradients, lighting scripts, and texture overlays, offering presets, custom stop editors, and per-page overrides.
-- Create Card Lab view with folders for layout templates, border/shadow presets, and content modules, enabling quick experimentation and saving of card archetypes.
+- Introduce state folders (default, hover, focus, pressed, disabled) within the inspector so variants expose per-state border, gradient, and shadow overrides.
+- Extend copy workflows to include multi-state CSS snippets and annotate which tokens power each section of the card preview.
+- Instrument the preview canvas with hover aids (token tags, contrast callouts) and deeper content examples (tables, media) highlighting propagation.
+- Build dedicated Button Workshop, Background Studio, and Card Lab routes that reuse inspector folders while persisting per-view configurations.
+- Wire variant activation shortcuts from the preview tiles so users can cycle archetypes with keyboard navigation.
 
 Deliverables:
-- A curated set of preview cards wired to live theme tokens, effect editors, and copy controls.
+- Stateful card controls, instrumented preview canvas, and routed workspaces for deeper editing.
 
 Acceptance:
-- Editing tokens for gradients, borders, shadows, and lighting reflects instantly in preview cards; Copy Card Style outputs accurate CSS and token references.
+- Users can configure per-state card styling, understand token provenance inside the preview, and navigate between specialized workspaces without losing changes.
 
 ### Layer 4 – Feedback & Accessibility
 - Compute WCAG contrast for text-on-surface pairs, border-on-background visibility, and gradient-on-text legibility; account for lighting overlays that may affect perceived contrast.
@@ -152,7 +136,7 @@ Acceptance:
 
 ## Milestones
 - M1: Strategy & Background system ready (Layers 0–1) with initial gradients and lighting tokens.
-- M2: Containers and initial cards live (Layers 2–3) including effect editors and toolbar wiring.
+- M2: Card system live (Layer 3) including effect editors and toolbar wiring.
 - M3: Accessibility and state management (Layers 4–5) validating gradients/borders/shadows and copy/reset flows.
 - M4: Optional integrations plus QA/performance (Layers 6–8) polishing interactions and preparing future sync.
 - M5: Documentation & release enablement (Layer 9) with effect recipes and action button guidance.
@@ -164,7 +148,6 @@ Acceptance:
 - Accessibility regressions from lighting overlays: use high-contrast focus rings, provide reduced-lighting mode, and run keyboard audits each milestone.
 
 ## Timeline (Indicative)
-- Week 1: Layers 0–2 (planning, background system, container shells with effect editors)
 - Week 2: Layer 3 (cards) and Layer 4 (contrast + lighting safety)
 - Week 3: Layer 5 (persistence + copy/reset tooling) plus targeted QA
 - Week 4: Layer 6 (deferred integrations), Layers 7–9 (tests, performance polish, docs, release)

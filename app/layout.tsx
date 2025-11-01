@@ -3,6 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/providers";
 import { BackgroundSurface } from "@/components/surfaces/background-surface";
 import { Navbar } from "@/components/navbar";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Colors - Color Palette Picker",
@@ -27,6 +28,7 @@ export default function RootLayout({
             <Navbar />
             <main className="pt-28">{children}</main>
           </BackgroundSurface>
+          <Toaster richColors closeButton position="top-right" />
         </ThemeProvider>
       </body>
     </html>

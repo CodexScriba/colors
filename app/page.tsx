@@ -1,52 +1,39 @@
+import { PreviewCanvas } from "@/components/preview/preview-canvas";
+import { VariablesInspector } from "@/components/inspector/variables-inspector";
+
 export default function Home() {
   return (
-    <div className="container mx-auto px-4 py-12">
-      <section className="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center space-y-8 text-center">
-        <h1 className="text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl">
-          Colors
-        </h1>
-        <p className="max-w-2xl text-lg text-muted-foreground sm:text-xl">
-          A design tool to help you pick color palettes and see how colors interact with each other.
-          Create beautiful, accessible color schemes for your projects.
+    <div className="mx-auto flex max-w-7xl flex-col gap-16 px-4 pb-16 pt-12 md:px-6 lg:px-8">
+      <section className="mx-auto grid max-w-3xl gap-5 text-center">
+        <p className="text-sm font-medium uppercase tracking-[0.35em] text-accent">
+          Layered color systems
         </p>
-        <div className="flex flex-wrap justify-center gap-4">
-          <div className="h-32 w-32 rounded-lg bg-primary transition-transform hover:scale-105" />
-          <div className="h-32 w-32 rounded-lg bg-secondary transition-transform hover:scale-105" />
-          <div className="h-32 w-32 rounded-lg bg-accent transition-transform hover:scale-105" />
-          <div className="h-32 w-32 rounded-lg bg-muted transition-transform hover:scale-105" />
-        </div>
+        <h1 className="text-4xl font-semibold tracking-tight text-foreground sm:text-5xl md:text-6xl">
+          Build luminous surfaces with confidence
+        </h1>
+        <p className="text-balance text-base text-muted-foreground sm:text-lg">
+          Colors stitches gradients, borders, shadows, and lighting together so
+          you can orchestrate background, container, and card layers without
+          losing accessibility or harmony.
+        </p>
       </section>
 
-      <section className="py-24">
-        <h2 className="mb-12 text-center text-3xl font-bold">
-          Scroll down to see the navbar expand
-        </h2>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div
-              key={i}
-              className="rounded-lg border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
-            >
-              <h3 className="mb-2 text-xl font-semibold">Feature {i + 1}</h3>
-              <p className="text-muted-foreground">
-                Explore color palettes and combinations with our intuitive design tools.
-              </p>
-            </div>
-          ))}
-        </div>
+      <section className="grid gap-8 lg:grid-cols-[clamp(320px,28vw,380px)_1fr] lg:items-start">
+        <VariablesInspector />
+        <PreviewCanvas />
       </section>
 
-      <section className="py-24">
-        <div className="space-y-4">
-          {Array.from({ length: 10 }).map((_, i) => (
-            <div
-              key={i}
-              className="rounded-lg border bg-card p-8 text-center text-muted-foreground"
-            >
-              Additional content section {i + 1} - Keep scrolling to see navbar transform
-            </div>
-          ))}
-        </div>
+      <section className="mx-auto grid max-w-4xl gap-6 text-center text-sm text-muted-foreground">
+        <p>
+          Container settings persist in your browser so you can iterate across
+          sessions. Upcoming layers will wire Buttons, Backgrounds, Cards, and
+          Effects into the same tooling for end-to-end palette control.
+        </p>
+        <p>
+          Need to start over? Use the toolbar reset actions or toggle ambient and
+          directional lighting independently to study how each pass influences the
+          hierarchy.
+        </p>
       </section>
     </div>
   );
